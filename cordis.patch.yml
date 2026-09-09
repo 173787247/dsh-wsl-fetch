@@ -1,0 +1,6 @@
+- insert:
+    - id: dsh-wsl-fetch
+      name: dsh-wsl-fetch
+      config:
+        timeoutMs: 30000
+        maxRedirects: 5
