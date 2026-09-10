@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.1
+
+- Retry transient proxy/network failures (default `retries: 2`).
+- Reuse a shared undici `ProxyAgent` instead of open/close per request.
+- Follow `www.` ↔ apex host redirects on the same site.
+- Surface undici/TLS cause codes in `web fetch failed: …` messages.
+- Prompt: on redirect/failure, retry the Location URL or another source.
+
 ## 0.1.0
 
 - Register `ctx.web` fetch provider `wsl-proxy` using undici `ProxyAgent`.

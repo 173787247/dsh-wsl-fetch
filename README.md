@@ -43,7 +43,9 @@ Restart `dsh web` with `NODE_USE_ENV_PROXY=1` and your proxy env (see dsh-wsl-ki
 | Key | Default | Meaning |
 |-----|---------|---------|
 | `timeoutMs` | `30000` | Fetch deadline |
-| `maxRedirects` | `5` | Same-origin redirects |
+| `maxRedirects` | `5` | Same-site redirects (`www` ↔ apex allowed) |
+| `retries` | `2` | Extra attempts after transient proxy/network failure |
+| `retryDelayMs` | `400` | Base delay between retries (× attempt) |
 | `maxResponseBytes` | `5000000` | Body byte cap |
 | `maxBodyChars` | `100000` | Decoded char cap |
 | `userAgent` | product UA | Request User-Agent |

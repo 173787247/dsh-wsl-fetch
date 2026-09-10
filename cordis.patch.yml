@@ -4,3 +4,4 @@
       config:
         timeoutMs: 30000
         maxRedirects: 5
+        retries: 2

@@ -1,6 +1,6 @@
 {
   "name": "dsh-wsl-fetch",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Proxy-aware web_fetch provider for WSL: send official web_fetch through Windows HTTP_PROXY instead of pinning a public IP from Linux.",
   "license": "MIT",
   "repository": {

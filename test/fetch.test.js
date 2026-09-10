@@ -3,10 +3,13 @@ import { describe, it } from "node:test";
 import {
   classifyContentType,
   createFetchProvider,
+  formatNetworkCause,
   isBlockedHostname,
   isPrivateIp,
+  isWwwHostAlias,
   parseFetchUrl,
   readProxyUrl,
+  shouldFollowRedirect,
   shouldPinFetchProvider,
 } from "../lib/fetch.js";
 
@@ -85,6 +88,91 @@ describe("createFetchProvider", () => {
     assert.equal(result.statusCode, 200);
     assert.equal(result.body.kind, "html");
     assert.match(result.body.content, /ok/);
+  });
+
+  it("retries transient network failures", async () => {
+    let calls = 0;
+    const encoder = new TextEncoder();
+    const body = encoder.encode("ok");
+    const p = createFetchProvider({
+      proxyUrl: "http://127.0.0.1:16006",
+      retries: 2,
+      retryDelayMs: 1,
+      async request() {
+        calls += 1;
+        if (calls < 3) throw new Error("fetch failed");
+        return {
+          response: {
+            status: 200,
+            headers: new Headers({ "content-type": "text/plain" }),
+            body: new ReadableStream({
+              start(c) {
+                c.enqueue(body);
+                c.close();
+              },
+            }),
+          },
+          close: async () => {},
+        };
+      },
+    });
+    const result = await p.fetch({ url: "https://example.com/" });
+    assert.equal(calls, 3);
+    assert.equal(result.body.content, "ok");
+  });
+
+  it("follows www to apex redirects", async () => {
+    let step = 0;
+    const encoder = new TextEncoder();
+    const body = encoder.encode("<html>apex</html>");
+    const p = createFetchProvider({
+      proxyUrl: "http://127.0.0.1:16006",
+      async request(url) {
+        step += 1;
+        if (step === 1) {
+          assert.equal(url.hostname, "www.example.com");
+          return {
+            response: {
+              status: 301,
+              headers: new Headers({ location: "https://example.com/" }),
+              body: null,
+            },
+            close: async () => {},
+          };
+        }
+        assert.equal(url.hostname, "example.com");
+        return {
+          response: {
+            status: 200,
+            headers: new Headers({ "content-type": "text/html" }),
+            body: new ReadableStream({
+              start(c) {
+                c.enqueue(body);
+                c.close();
+              },
+            }),
+          },
+          close: async () => {},
+        };
+      },
+    });
+    const result = await p.fetch({ url: "https://www.example.com/" });
+    assert.equal(result.url, "https://example.com/");
+    assert.match(result.body.content, /apex/);
+  });
+});
+
+describe("redirect helpers", () => {
+  it("treats www as same-site alias", () => {
+    const a = new URL("https://www.example.com/");
+    const b = new URL("https://example.com/");
+    assert.equal(isWwwHostAlias(a, b), true);
+    assert.equal(shouldFollowRedirect(a, b), true);
+    assert.equal(shouldFollowRedirect(a, new URL("https://evil.com/")), false);
+  });
+
+  it("formats opaque fetch failed causes", () => {
+    assert.match(formatNetworkCause(new Error("fetch failed")), /proxy\/TLS\/timeout/);
   });
 });
 

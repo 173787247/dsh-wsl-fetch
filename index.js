@@ -11,6 +11,8 @@ export function apply(ctx, config = {}) {
     maxRedirects: integer(config.maxRedirects, 5),
     maxResponseBytes: positive(config.maxResponseBytes, 5_000_000),
     maxBodyChars: positive(config.maxBodyChars, 100_000),
+    retries: integer(config.retries, 2),
+    retryDelayMs: positive(config.retryDelayMs, 400),
     userAgent: typeof config.userAgent === "string" && config.userAgent.trim() ? config.userAgent.trim() : undefined,
   });
 
@@ -29,7 +31,7 @@ export function apply(ctx, config = {}) {
     name: "runtime:wsl-web-fetch",
     order: 117,
     text: provider.available()
-      ? "web_fetch goes through the Windows HTTP proxy (Clash/V2Ray) instead of connecting from WSL to a pinned public IP. Keep using web_fetch for public https pages. Do not fetch localhost or private addresses."
+      ? "web_fetch goes through the Windows HTTP proxy (Clash/V2Ray) instead of connecting from WSL to a pinned public IP. Keep using web_fetch for public https pages. Do not fetch localhost or private addresses. If a fetch fails or reports a cross-origin redirect, retry the Location URL directly or switch to another public source; do not loop the same failing URL."
       : "No HTTP(S)_PROXY is set, so web_fetch uses the official direct provider. On Windows+WSL that often fails; set HTTPS_PROXY and restart dsh web, or install dsh-wsl-net and run net_doctor.",
   });
 }
