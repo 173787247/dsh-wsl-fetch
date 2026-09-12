@@ -7,6 +7,7 @@
 - Follow `www.` ↔ apex host redirects on the same site.
 - Surface undici/TLS cause codes in `web fetch failed: …` messages.
 - Prompt: on redirect/failure, retry the Location URL or another source.
+- Docs: EN/ZH README aligned for dsh `0.1.5-rc.1`, kit Daily/LLM install, and Cloudflare 1010 / red-UI notes.
 
 ## 0.1.0
 

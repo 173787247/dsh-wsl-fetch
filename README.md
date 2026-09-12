@@ -1,10 +1,27 @@
 # dsh-wsl-fetch
 
-> **Kit:** [dsh-wsl-kit](https://github.com/173787247/dsh-wsl-kit). Use `KIT_SET=daily`.
+> **Kit:** [dsh-wsl-kit](https://github.com/173787247/dsh-wsl-kit). Use `KIT_SET=daily` or `llm` (both install this plugin).
+
+**Version / Works-with one-liner:** see **Compatibility** below (kept in sync with [dsh-wsl-kit](https://github.com/173787247/dsh-wsl-kit#compatibility-2026-09)).
 
 DeepSeek Harness plugin: make official **`web_fetch`** use the Windows HTTP proxy from WSL.
 
-[中文说明 ↓](#中文)
+[中文说明 → README.zh.md](./README.zh.md)
+
+## Compatibility
+
+| Field | Value |
+|-------|-------|
+| **Plugin** | `dsh-wsl-fetch` **0.1.1** |
+| **Minimum dsh** | ≥ **0.1.2** (web UI one-shot `?token=` on Windows relay `:3081`) |
+| **Latest verified** | See [dsh-wsl-kit Compatibility](https://github.com/173787247/dsh-wsl-kit#compatibility-2026-09) (currently **`0.1.5-rc.1`**) — single source of truth for the suite |
+| **Kit set** | `daily` (also in `github` / `full`; fetch+net also in `llm`) |
+| **Cloud Flash** | Use model id **`deepseek-flash`** (V4.1 Flash) in `~/.dsh/settings.yaml` / `llm-deepseek` — not configured by this plugin |
+| **Agent Teams** | Upstream experimental; not required here |
+
+Suite floor versions: kit [`check-plugin-versions.sh`](https://github.com/173787247/dsh-wsl-kit/blob/master/scripts/check-plugin-versions.sh). Fault tree: [TROUBLESHOOTING.md](https://github.com/173787247/dsh-wsl-kit/blob/master/docs/TROUBLESHOOTING.md).
+
+**Scope:** in-process official `web_fetch` via undici `ProxyAgent`. Requires `HTTP(S)_PROXY`. Cloudflare 403/1010 through Clash needs a **DIRECT** rule — outside this plugin.
 
 ## Why
 
@@ -22,13 +39,17 @@ Private/localhost URLs stay blocked.
 dsh plugin --profile web add github:173787247/dsh-wsl-fetch
 ```
 
-Or a local checkout:
+Or via kit: `KIT_SET=daily bash install.sh` (includes this plugin).
+
+Local checkout:
 
 ```sh
 dsh plugin --profile web add /path/to/dsh-wsl-fetch
 ```
 
-Restart `dsh web` with `NODE_USE_ENV_PROXY=1` and your proxy env (see dsh-wsl-kit `restart-dsh-web.sh`). Open a **new** session.
+Restart with kit [`restart-dsh-web.sh`](https://github.com/173787247/dsh-wsl-kit/blob/master/scripts/restart-dsh-web.sh) (`NODE_USE_ENV_PROXY=1` + proxy env). Open a **new** session.
+
+Awesome listing (pending merge): [awesome-dsh-plugin#4736](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/4736).
 
 ## Config
 
@@ -38,6 +59,8 @@ Restart `dsh web` with `NODE_USE_ENV_PROXY=1` and your proxy env (see dsh-wsl-ki
   config:
     timeoutMs: 30000
     maxRedirects: 5
+    retries: 2
+    retryDelayMs: 400
 ```
 
 | Key | Default | Meaning |
@@ -52,6 +75,12 @@ Restart `dsh web` with `NODE_USE_ENV_PROXY=1` and your proxy env (see dsh-wsl-ki
 
 If `HTTP(S)_PROXY` is missing, the plugin stays registered but **unavailable**; official `http` remains selected.
 
+## What success / failure look like
+
+- Log: `[dsh-wsl-fetch] web_fetch via proxy (...:port) provider=wsl-proxy` → provider is active.
+- Red fetch UI with that log line → **per-URL** proxy/TLS/site failure (retry another source). Not “plugin missing”.
+- Cloudflare **403 / 1010** through Clash → site WAF; add Clash **DIRECT** for that host. This plugin cannot override WAF.
+
 ## Test
 
 ```sh
@@ -60,16 +89,10 @@ npm test
 bash scripts/stress.sh
 ```
 
+## Changelog
+
+See [CHANGELOG.md](./CHANGELOG.md).
+
 ## License
 
 MIT
-
----
-
-## 中文
-
-官方 `web_fetch` 在 WSL 里先 DNS、再**直连公网 IP**，不走 Windows 上的 Clash。于是 API 通、抓网页失败。
-
-本插件在有 `HTTPS_PROXY` 时把 `web_fetch` 切到 `wsl-proxy`（undici `ProxyAgent`）。仍拒绝内网 / localhost。
-
-安装后重启 `dsh web`，**新开会话**。
