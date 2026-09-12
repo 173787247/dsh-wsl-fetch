@@ -49,7 +49,7 @@ dsh plugin --profile web add /path/to/dsh-wsl-fetch
 
 Restart with kit [`restart-dsh-web.sh`](https://github.com/173787247/dsh-wsl-kit/blob/master/scripts/restart-dsh-web.sh) (`NODE_USE_ENV_PROXY=1` + proxy env). Open a **new** session.
 
-Awesome listing (pending merge): [awesome-dsh-plugin#4736](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/4736).
+Awesome listing: [awesome-dsh-plugin entry](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/blob/main/data/plugins/173787247__dsh-wsl-fetch.yml) ([#4736](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/4736) merged).
 
 ## Config
 

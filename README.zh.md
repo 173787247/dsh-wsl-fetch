@@ -47,7 +47,7 @@ dsh plugin --profile web add /path/to/dsh-wsl-fetch
 
 用套件 [`restart-dsh-web.sh`](https://github.com/173787247/dsh-wsl-kit/blob/master/scripts/restart-dsh-web.sh) 重启（带 `NODE_USE_ENV_PROXY=1` 和代理环境）。**新开会话**。
 
-awesome 收录（待合入）：[awesome-dsh-plugin#4736](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/4736)。
+awesome 已收录：[条目](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/blob/main/data/plugins/173787247__dsh-wsl-fetch.yml)（[#4736](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/4736) 已合）。
 
 ## 配置
 
