@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import {
+  adviceForFetchFailure,
   classifyContentType,
   createFetchProvider,
   formatNetworkCause,
@@ -173,6 +174,11 @@ describe("redirect helpers", () => {
 
   it("formats opaque fetch failed causes", () => {
     assert.match(formatNetworkCause(new Error("fetch failed")), /proxy\/TLS\/timeout/);
+  });
+
+  it("adviceForFetchFailure covers WAF and missing proxy", () => {
+    const waf = adviceForFetchFailure("403 Forbidden error code: 1010");
+    assert.ok(waf.some((t) => /DIRECT|WAF|403/i.test(t)));
   });
 });
 

@@ -1,3 +1,7 @@
+## 0.1.2
+
+- adviceForFetchFailure tips on WAF/proxy/DNS in web_fetch errors.
+
 # Changelog
 
 ## 0.1.1
