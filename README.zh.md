@@ -8,11 +8,23 @@
 
 [English → README.md](./README.md)
 
+## 在套件里的位置
+
+让官方 web_fetch 走 Windows HTTP 代理。dsh-wsl-net 只诊断，本插件才真正去抓。
+
+```mermaid
+flowchart LR
+  agent["web_fetch"] --> fetch["dsh-wsl-fetch"] --> proxy["Windows HTTP 代理"] --> web["HTTPS"]
+```
+
+整套关系图和版本快照：[dsh-wsl-kit 中文说明](https://github.com/173787247/dsh-wsl-kit/blob/master/README.zh.md)。本插件是 **0.1.2**（daily，也在 llm）。不要把那份总表抄进本 README。
+
+
 ## 兼容性
 
 | 项 | 值 |
 |----|----|
-| **插件** | `dsh-wsl-fetch` **0.1.1** |
+| **插件** | `dsh-wsl-fetch` **0.1.2** |
 | **最低 dsh** | ≥ **0.1.2**（Windows 中继 `:3081` 一次性 `?token=`） |
 | **最新验证** | 以 [dsh-wsl-kit 兼容性](https://github.com/173787247/dsh-wsl-kit#compatibility-2026-09) 为准（当前 **`0.1.5-rc.1`**）— 套件唯一真源 |
 | **套件档位** | `daily`（亦含于 `github` / `full`；fetch+net 亦在 `llm`） |
