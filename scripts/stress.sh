@@ -12,7 +12,7 @@ if [[ -n "${PID}" ]]; then
 fi
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")/.." && pwd)"
 if [[ ! -f "${ROOT}/scripts/stress.mjs" ]]; then
-  ROOT="/mnt/c/Users/rchua/Desktop/AIFullStackDevelopment/dsh-wsl-fetch"
+  ROOT="${DSH_STRESS_ROOT:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)}"
 fi
 echo "dsh_pid=${PID:-none} NODE_USE_ENV_PROXY=${NODE_USE_ENV_PROXY:-unset}"
 node "${ROOT}/scripts/stress.mjs"
